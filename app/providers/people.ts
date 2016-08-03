@@ -14,7 +14,7 @@ export class PeopleProvider {
 
   public list(group: Group) {
     return new Promise((resolve, reject) => {
-      this.storage.query("SELECT * FROM people where group_id = ?", [group.id]).then((data) => {
+      this.storage.query("SELECT * FROM people where group_id = ?", [group._id]).then((data) => {
         let people = new Array<Person>();
         let rows = data.res.rows;
         if(rows.length > 0) {
@@ -41,9 +41,9 @@ export class PeopleProvider {
     let sql = 'INSERT INTO people (name, group_id) VALUES (?, ?)';
 
     return new Promise((resolve, reject) => {
-      this.storage.query(sql, [person.name, group.id]).then((data) => {
+      this.storage.query(sql, [person.name, group._id]).then((data) => {
         person.id = data.res["insertId"];
-        person.group_id = group.id;
+        person.group_id = group._id;
         resolve(person);
       }, (error) => {
         reject(error);

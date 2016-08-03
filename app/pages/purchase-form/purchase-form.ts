@@ -25,7 +25,7 @@ export class PurchaseFormPage {
     this.people = navParams.get('people');
 
     let selectedPurchase = navParams.get('purchase');
-    this.purchase = (selectedPurchase === undefined) ? new Purchase(null, "", this.group.id) : selectedPurchase;
+    this.purchase = (selectedPurchase === undefined) ? new Purchase(null, "", this.group._id) : selectedPurchase;
   }
 
   addPaymentItem(event, person: Person) {

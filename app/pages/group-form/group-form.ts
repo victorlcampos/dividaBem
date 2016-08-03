@@ -11,7 +11,7 @@ export class GroupFormPage {
 
   constructor(private navCtrl: NavController, navParams: NavParams, private groupProvider: GroupsProvider) {
     let selectedGroup = navParams.get('group');
-    this.group = (selectedGroup === undefined) ? { name: null } : selectedGroup;
+    this.group = (selectedGroup === undefined) ? new Group(null, null, "") : selectedGroup;
   }
 
   saveGroup(event) {
