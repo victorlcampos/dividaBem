@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ person.id ? "Editar" : "Adicionar"}} um Membro</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-label primary floating>Nome</ion-label>
+      <ion-input [(ngModel)]="person.name" name="name"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <button class='save' (click)="saveGroup($event)">
+    Salvar
+    <ion-icon name="create"></ion-icon>
+  </button>
+</ion-content>

@@ -1,0 +1,79 @@
+<!--
+Generated template for the GroupPage page.
+
+See http://ionicframework.com/docs/v2/components/#navigation for more info on
+Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{group.name}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      <ion-card-title>
+        Total Gasto
+      </ion-card-title>
+      <h1>R$ 0</h1>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-item-divider light>
+      Membros
+      <button class='add' small (click)="addPerson($event)">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-item-divider>
+
+    <ion-item-sliding *ngFor="let person of people">
+      <ion-item >
+        <h2>{{person.name}}</h2>
+        <p>
+          <ion-badge item-right danger>Gastou R$ 0</ion-badge>
+          <ion-badge item-right>Pagou R$ 0</ion-badge>
+          <ion-badge item-right secondary>Saldo R$ {{person.balance}}</ion-badge>
+        </p>
+      </ion-item>
+      <ion-item-options>
+        <button primary (click)="editPerson($event, person)">
+          <ion-icon name="md-create"></ion-icon>
+          Editar
+        </button>
+        <button *ngIf="person.balance == 0" danger (click)="deletePerson($event, person)">
+          <ion-icon name="trash"></ion-icon>
+          Remover
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+
+    <ion-item-divider light>
+      Histórico
+      <button class='add' small (click)="addPurchase($event)">
+        <ion-icon name="add"></ion-icon>
+      </button>
+    </ion-item-divider>
+
+    <ion-item-sliding *ngFor="let purchase of purchases">
+      <ion-item>
+        <h2>{{purchase.name}}</h2>
+        <p>
+          <ion-badge item-right danger>Gastou R$ 0</ion-badge>
+        </p>
+      </ion-item>
+      <ion-item-options>
+        <button primary (click)="editPurchase($event, purchase)">
+          <ion-icon name="md-create"></ion-icon>
+          Editar
+        </button>
+        <button danger (click)="deletePurchase($event, purchase)">
+          <ion-icon name="trash"></ion-icon>
+          Remover
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Divida Bem!
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item-sliding *ngFor="let group of groups">
+      <ion-item (click)="showGroup($event, group)">
+        <h2 >{{group.name}}</h2>
+      </ion-item>
+      <ion-item-options>
+        <button primary (click)="editGroup($event, group)">
+          <ion-icon name="md-create"></ion-icon>
+          Editar
+        </button>
+        <button danger (click)="deleteGroup($event, group)">
+          <ion-icon name="trash"></ion-icon>
+          Remover
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <button class='add' fab danger fab-bottom fab-right (click)="addGroup($event)">
+    <ion-icon name="add"></ion-icon>
+  </button>
+</ion-content>
