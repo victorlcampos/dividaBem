@@ -92,6 +92,20 @@ export class GroupPage {
     });
   }
 
+  editPurchase(event, purchase: Purchase) {
+    this.navCtrl.push(PurchaseFormPage, {
+      purchase: purchase,
+      group: this.group,
+      people: this.people
+    });
+  }
+
+  totalSpend() {
+    return this.people.reduce((acc, person) => {
+      return acc + person.totalSpend(this.purchases);
+    }, 0);
+  }
+
   totalSpendBy(person:Person) {
     return person.totalSpend(this.purchases);
   }

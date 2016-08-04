@@ -35,6 +35,11 @@ export class PurchasesProvider {
   }
 
   public save(purchase: Purchase) {
+    purchase.payments.forEach((p) => {
+      p.value = parseFloat(p.value.toString());
+    });
+
+
     if (purchase._id) {
       return this.edit(purchase);
     } else {

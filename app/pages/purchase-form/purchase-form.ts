@@ -63,7 +63,7 @@ export class PurchaseFormPage {
         {
           text: 'Salvar',
           handler: data => {
-            payment.paymentItems.push(new PaymentItem(data.name, data.value, data.number));
+            payment.paymentItems.push(new PaymentItem(data.name, parseFloat(data.value), parseInt(data.number)));
           }
         }
       ]

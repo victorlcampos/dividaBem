@@ -17,7 +17,7 @@ Ionic pages and navigation.
       <ion-card-title>
         Total Gasto
       </ion-card-title>
-      <h1>R$ 0</h1>
+      <h1>{{totalSpend() | currency:'BRL':true:'1.2-2' }}</h1>
     </ion-card-content>
   </ion-card>
 
@@ -33,9 +33,8 @@ Ionic pages and navigation.
       <ion-item >
         <h2>{{person.name}}</h2>
         <p>
-          <ion-badge item-right danger>Gastou R$ {{totalSpendBy(person)}}</ion-badge>
-          <ion-badge item-right>Pagou R$ {{totalPaidBy(person)}}</ion-badge>
-          <ion-badge item-right secondary>Saldo R$ {{person.balance}}</ion-badge>
+          <ion-badge item-right>Pagou {{totalPaidBy(person) | currency:'BRL':true:'1.2-2'}}</ion-badge>
+          <ion-badge item-right secondary>Saldo {{person.balance | currency:'BRL':true:'1.2-2'}}</ion-badge>
         </p>
       </ion-item>
       <ion-item-options>
@@ -61,7 +60,7 @@ Ionic pages and navigation.
       <ion-item>
         <h2>{{purchase.name}}</h2>
         <p>
-          <ion-badge item-right danger>Gastou R$ {{purchase.total()}}</ion-badge>
+          <ion-badge item-right danger>Gastou {{purchase.total()  | currency:'BRL':true:'1.2-2'}}</ion-badge>
         </p>
       </ion-item>
       <ion-item-options>

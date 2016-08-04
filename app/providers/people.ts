@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import {Storage, SqlStorage} from 'ionic-angular';
 import {Person} from '../models/person';
+import {Purchase} from '../models/purchase';
 import {Group} from '../models/group';
+
+import {PurchasesProvider} from './purchases';
 
 declare function require(a);
 var PouchDB = require("pouchdb");
@@ -11,7 +14,7 @@ var PouchDB = require("pouchdb");
 export class PeopleProvider {
   private storage;
 
-  constructor() {
+  constructor(private purchasesProvider: PurchasesProvider) {
     this.storage = new PouchDB('dividaBem', { adapter: 'websql' });
   }
 
@@ -23,12 +26,16 @@ export class PeopleProvider {
     }
 
     return new Promise((resolve, reject) => {
-      this.storage.query(myMapFunction, {key: group._id, include_docs : true}).then(docs => {
-        resolve(docs.rows.map(row => {
-          return new Person(row.doc._id, row.doc._rev, row.doc.name, row.doc.group_id);
-        }));
-      }, (error) => {
-        reject(error);
+      this.purchasesProvider.list(group).then((purchases: Array<Purchase>) => {
+        this.storage.query(myMapFunction, {key: group._id, include_docs : true}).then(docs => {
+          resolve(docs.rows.map(row => {
+            let person = new Person(row.doc._id, row.doc._rev, row.doc.name, row.doc.group_id)
+            person.balance = person.totalPaid(purchases) - person.totalSpend(purchases);
+            return person;
+          }));
+        }, (error) => {
+          reject(error);
+        });
       });
     });
   }

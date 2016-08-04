@@ -17,6 +17,7 @@ export class GroupsProvider {
 
   constructor() {
     this.storage = new PouchDB('dividaBem', { adapter: 'websql' });
+    this.storage.info().then(console.log.bind(console));
   }
 
   public list() {
