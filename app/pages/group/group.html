@@ -33,8 +33,8 @@ Ionic pages and navigation.
       <ion-item >
         <h2>{{person.name}}</h2>
         <p>
-          <ion-badge item-right danger>Gastou R$ 0</ion-badge>
-          <ion-badge item-right>Pagou R$ 0</ion-badge>
+          <ion-badge item-right danger>Gastou R$ {{totalSpendBy(person)}}</ion-badge>
+          <ion-badge item-right>Pagou R$ {{totalPaidBy(person)}}</ion-badge>
           <ion-badge item-right secondary>Saldo R$ {{person.balance}}</ion-badge>
         </p>
       </ion-item>
@@ -61,7 +61,7 @@ Ionic pages and navigation.
       <ion-item>
         <h2>{{purchase.name}}</h2>
         <p>
-          <ion-badge item-right danger>Gastou R$ 0</ion-badge>
+          <ion-badge item-right danger>Gastou R$ {{purchase.total()}}</ion-badge>
         </p>
       </ion-item>
       <ion-item-options>

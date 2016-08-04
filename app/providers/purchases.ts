@@ -4,70 +4,57 @@ import {Storage, SqlStorage} from 'ionic-angular';
 import {Purchase} from '../models/purchase';
 import {Group} from '../models/group';
 
+declare function require(a);
+var PouchDB = require("pouchdb");
 
 @Injectable()
 export class PurchasesProvider {
-  storage: Storage = null;
+  private storage;
 
   constructor() {
-    this.storage = new Storage(SqlStorage);
-    this.storage.query("CREATE TABLE IF NOT EXISTS purchases (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, group_id INTEGER)");
+    this.storage = new PouchDB('dividaBem', { adapter: 'websql' });
   }
 
   public list(group: Group) {
+    function myMapFunction(doc, emit) {
+      if (doc.type === 'Purchase') {
+        emit(doc.group_id);
+      }
+    }
+
     return new Promise((resolve, reject) => {
-      this.storage.query("SELECT * FROM purchases where group_id = ?", [group._id]).then((data) => {
-        let purchases = new Array<Purchase>();
-        let rows = data.res.rows;
-        if(rows.length > 0) {
-          for(let i = 0; i < rows.length; i++) {
-            purchases.push(new Purchase(rows.item(i).id, rows.item(i).name, rows.item(i).group_id));
-          }
-        }
-        resolve(purchases);
+      this.storage.query(myMapFunction, {key: group._id, include_docs : true}).then(docs => {
+        resolve(docs.rows.map(row => {
+          let purchase = new Purchase(row.doc._id, row.doc._rev, row.doc.name, row.doc.group_id);
+          return purchase.deserialize(row.doc);
+        }));
       }, (error) => {
         reject(error);
       });
     });
   }
 
-  public save(group: Group, purchase: Purchase) {
-    if (purchase.id) {
+  public save(purchase: Purchase) {
+    if (purchase._id) {
       return this.edit(purchase);
     } else {
-      return this.create(group, purchase);
+      return this.create(purchase);
     }
   }
 
-  public create(group: Group, purchase: Purchase) {
-    let sql = 'INSERT INTO purchases (name, group_id) VALUES (?, ?)';
-
+  public create(purchase: Purchase) {
     return new Promise((resolve, reject) => {
-      this.storage.query(sql, [purchase.name, group._id]).then((data) => {
-        purchase.id = data.res["insertId"];
-        purchase.group_id = group._id;
-        resolve(purchase);
-      }, (error) => {
-        reject(error);
-      });
+      resolve(this.storage.post(purchase))
     });
   }
 
   public edit(purchase: Purchase) {
-    let sql = 'UPDATE purchases set name=? where id = ?';
-
     return new Promise((resolve, reject) => {
-      this.storage.query(sql, [purchase.name, purchase.id]).then((data) => {
-        resolve(purchase);
-      }, (error) => {
-        reject(error);
-      });
+      resolve(this.storage.put(purchase))
     });
   }
 
   public delete(purchase: Purchase) {
-    let sql = 'DELETE from purchases where id = ?';
-
-    return this.storage.query(sql, [purchase.id]);
+    return this.storage.remove(purchase);
   }
 }

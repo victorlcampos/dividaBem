@@ -23,6 +23,8 @@ export class GroupPage {
 
   constructor(private navCtrl: NavController, navParams: NavParams, public peopleProvider: PeopleProvider, public purchasesProvider: PurchasesProvider) {
     this.group = navParams.get('group');
+    this.people = [];
+    this.purchases = [];
   }
 
   private onPageDidEnter() {
@@ -88,5 +90,13 @@ export class GroupPage {
       group: this.group,
       people: this.people
     });
+  }
+
+  totalSpendBy(person:Person) {
+    return person.totalSpend(this.purchases);
+  }
+
+  totalPaidBy(person: Person) {
+    return person.totalPaid(this.purchases);
   }
 }

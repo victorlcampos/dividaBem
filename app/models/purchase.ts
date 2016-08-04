@@ -3,13 +3,24 @@ import {Person} from './person';
 
 export class Purchase {
   public payments: Array<Payment>;
+  private type = "Purchase";
 
   constructor(
-    public id: number,
+    public _id: string,
+    public _rev: string,
     public name: string,
-    public group_id: number
+    public group_id: string
   ) {
     this.payments = Array<Payment>();
+  }
+
+  deserialize(json) {
+    this.payments = json.payments.map((data) => {
+      let payment = new Payment(parseFloat(data.value), data.person_id);
+      return payment.deserialize(data);
+    });
+
+    return this;
   }
 
   public paymentFor(person: Person) {
@@ -18,7 +29,7 @@ export class Purchase {
     });
 
     if (!payment) {
-      payment = new Payment(null, 0, this.id, person._id);
+      payment = new Payment(0, person._id);
       this.payments.push(payment);
     }
 

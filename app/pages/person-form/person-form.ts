@@ -26,7 +26,7 @@ export class PersonFormPage {
     this.person = (selectedGroup === undefined) ? new Person(null, null, "", this.group._id) : selectedGroup;
   }
 
-  saveGroup(event) {
+  savePerson(event) {
     this.personProvider.save(this.person).then((data) => {
       this.navCtrl.pop();
     }, (error) => {

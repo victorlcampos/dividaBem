@@ -23,7 +23,7 @@ export class GroupsProvider {
     return new Promise((resolve, reject) => {
       this.storage.query(function (doc, emit) {
         emit(doc.type);
-      }, {key: 'groups', include_docs : true}).then(docs => {
+      }, {key: 'Group', include_docs : true}).then(docs => {
         resolve(docs.rows.map(row => {
           return new Group(row.doc._id, row.doc._rev, row.doc.name);
         }));

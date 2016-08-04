@@ -1,11 +1,10 @@
 export class Group {
-  private type: string
+  private type = "Group";
 
   constructor(
-    public _id: number,
+    public _id: string,
     public _rev: string,
     public name: string
   ) {
-    this.type = "groups"
   }
 }

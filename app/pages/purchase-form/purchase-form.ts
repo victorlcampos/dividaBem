@@ -6,6 +6,9 @@ import {Group}  from '../../models/group';
 import {Purchase}  from '../../models/purchase';
 import {PaymentItem}  from '../../models/payment-item';
 
+import {PurchasesProvider} from '../../providers/purchases';
+
+
 /*
   Generated class for the PurchaseFormPage page.
 
@@ -20,12 +23,12 @@ export class PurchaseFormPage {
   purchase: Purchase;
   people: Array<Person>;
 
-  constructor(private navCtrl: NavController, navParams: NavParams) {
+  constructor(private navCtrl: NavController, navParams: NavParams, private purchasesProvider: PurchasesProvider) {
     this.group = navParams.get('group');
     this.people = navParams.get('people');
 
     let selectedPurchase = navParams.get('purchase');
-    this.purchase = (selectedPurchase === undefined) ? new Purchase(null, "", this.group._id) : selectedPurchase;
+    this.purchase = (selectedPurchase === undefined) ? new Purchase(null, null, "", this.group._id) : selectedPurchase;
   }
 
   addPaymentItem(event, person: Person) {
@@ -60,12 +63,20 @@ export class PurchaseFormPage {
         {
           text: 'Salvar',
           handler: data => {
-            payment.paymentItems.push(new PaymentItem(null, data.name, data.value, data.number, payment.id));
+            payment.paymentItems.push(new PaymentItem(data.name, data.value, data.number));
           }
         }
       ]
     });
 
     this.navCtrl.present(prompt);
+  }
+
+  savePurchase(event) {
+    this.purchasesProvider.save(this.purchase).then((data) => {
+      this.navCtrl.pop();
+    }, (error) => {
+      console.log(error);
+    });
   }
 }

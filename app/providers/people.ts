@@ -4,7 +4,7 @@ import {Person} from '../models/person';
 import {Group} from '../models/group';
 
 declare function require(a);
-var PouchDB = require("pouchdb")
+var PouchDB = require("pouchdb");
 
 
 @Injectable()
@@ -17,7 +17,7 @@ export class PeopleProvider {
 
   public list(group: Group) {
     function myMapFunction(doc, emit) {
-      if (doc.type === 'people') {
+      if (doc.type === 'Person') {
         emit(doc.group_id);
       }
     }

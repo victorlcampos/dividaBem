@@ -5,13 +5,19 @@ export class Payment {
   public paymentItems: Array<PaymentItem>;
 
   constructor(
-    public id: number,
     public value: number,
-    public purchase_id: number,
-    public person_id: number
+    public person_id: string
   ) {
     this.tip = 10;
     this.paymentItems = new Array<PaymentItem>();
+  }
+
+  deserialize(json) {
+    this.paymentItems = json.paymentItems.map((data) => {
+      let paymentItem = new PaymentItem(data.name, parseFloat(data.value), parseInt(data.number));
+      return paymentItem;
+    })
+    return this;
   }
 
   public total() {
