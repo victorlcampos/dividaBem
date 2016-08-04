@@ -23,11 +23,11 @@ export class PersonFormPage {
     this.group = navParams.get('group');
 
     let selectedGroup = navParams.get('person');
-    this.person = (selectedGroup === undefined) ? { name: null } : selectedGroup;
+    this.person = (selectedGroup === undefined) ? new Person(null, null, "", this.group._id) : selectedGroup;
   }
 
   saveGroup(event) {
-    this.personProvider.save(this.group, this.person).then((data) => {
+    this.personProvider.save(this.person).then((data) => {
       this.navCtrl.pop();
     }, (error) => {
       console.log(error);

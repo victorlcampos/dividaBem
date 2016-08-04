@@ -14,11 +14,11 @@ export class Purchase {
 
   public paymentFor(person: Person) {
     let payment = this.payments.find((payment) => {
-      return payment.person_id == person.id;
+      return payment.person_id == person._id;
     });
 
     if (!payment) {
-      payment = new Payment(null, 0, this.id, person.id);
+      payment = new Payment(null, 0, this.id, person._id);
       this.payments.push(payment);
     }
 
