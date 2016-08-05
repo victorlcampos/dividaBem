@@ -1,18 +1,36 @@
 import { Injectable } from '@angular/core';
-import {Storage, SqlStorage} from 'ionic-angular';
 
 import {Purchase} from '../models/purchase';
 import {Group} from '../models/group';
 
-declare function require(a);
-var PouchDB = require("pouchdb");
+import {Provider} from './provider';
 
 @Injectable()
-export class PurchasesProvider {
-  private storage;
+export class PurchasesProvider extends Provider<Purchase> {
+  private _purchase: {[key: string]: Array<Purchase>};
 
   constructor() {
-    this.storage = new PouchDB('dividaBem', { adapter: 'websql' });
+    super();
+    this._purchase = {};
+  }
+
+  public getCache(key: string) {
+    return this._purchase[key];
+  }
+
+  public deserialize(doc) {
+    let purchase = new Purchase(doc._id, doc._rev, doc.name, doc.group_id);
+    return purchase.deserialize(doc);
+  }
+
+  protected onDatabaseChange = (change) => {
+    if (change.doc.type == this.getType()) {
+      this.updateCache(this.getCache(change.doc.group_id), change);
+    }
+  }
+
+  public getType() {
+    return "Purchase";
   }
 
   public list(group: Group) {
@@ -23,14 +41,21 @@ export class PurchasesProvider {
     }
 
     return new Promise((resolve, reject) => {
-      this.storage.query(myMapFunction, {key: group._id, include_docs : true}).then(docs => {
-        resolve(docs.rows.map(row => {
-          let purchase = new Purchase(row.doc._id, row.doc._rev, row.doc.name, row.doc.group_id);
-          return purchase.deserialize(row.doc);
-        }));
-      }, (error) => {
-        reject(error);
-      });
+      if (this._purchase[group._id]) {
+        resolve(this._purchase[group._id]);
+      } else {
+        this.storage.query(myMapFunction, {key: group._id, include_docs : true}).then(docs => {
+          this._purchase[group._id] = docs.rows.map(row => {
+            return this.deserialize(row.doc)
+          })
+
+          this.storage.changes({ live: true, since: 'now', include_docs: true}).on('change', this.onDatabaseChange);
+
+          resolve(this._purchase[group._id]);
+        }, (error) => {
+          reject(error);
+        });
+      }
     });
   }
 
@@ -39,27 +64,6 @@ export class PurchasesProvider {
       p.value = parseFloat(p.value.toString());
     });
 
-
-    if (purchase._id) {
-      return this.edit(purchase);
-    } else {
-      return this.create(purchase);
-    }
-  }
-
-  public create(purchase: Purchase) {
-    return new Promise((resolve, reject) => {
-      resolve(this.storage.post(purchase))
-    });
-  }
-
-  public edit(purchase: Purchase) {
-    return new Promise((resolve, reject) => {
-      resolve(this.storage.put(purchase))
-    });
-  }
-
-  public delete(purchase: Purchase) {
-    return this.storage.remove(purchase);
+    return super.save(purchase);
   }
 }

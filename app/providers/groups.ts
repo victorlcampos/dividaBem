@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
-import {Storage, SqlStorage} from 'ionic-angular';
 import {Group} from '../models/group';
-
-declare function require(a);
-var PouchDB = require("pouchdb")
-
+import {Provider} from './provider';
 /*
 Generated class for the Groups provider.
 
@@ -12,49 +8,47 @@ See https://angular.io/docs/ts/latest/guide/dependency-injection.html
 for more info on providers and Angular 2 DI.
 */
 @Injectable()
-export class GroupsProvider {
-  private storage;
+export class GroupsProvider extends Provider<Group> {
+  private _groups: Array<Group>;
 
-  constructor() {
-    this.storage = new PouchDB('dividaBem', { adapter: 'websql' });
-    this.storage.info().then(console.log.bind(console));
+  public getCache() {
+    return this._groups;
+  }
+
+  public deserialize(doc) {
+    return new Group(doc._id, doc._rev, doc.name);
+  }
+
+  protected onDatabaseChange = (change) => {
+    if (change.doc.type == this.getType()) {
+      this.updateCache(this.getCache(), change);
+    }
+  }
+
+  public getType() {
+    return "Group";
   }
 
   public list() {
     return new Promise((resolve, reject) => {
-      this.storage.query(function (doc, emit) {
-        emit(doc.type);
-      }, {key: 'Group', include_docs : true}).then(docs => {
-        resolve(docs.rows.map(row => {
-          return new Group(row.doc._id, row.doc._rev, row.doc.name);
-        }));
-      }, (error) => {
-        reject(error);
-      });
+      if (this._groups) {
+        resolve(this._groups);
+      } else {
+        this.storage.query(function (doc, emit) {
+          emit(doc.type);
+        }, {key: this.getType(), include_docs : true}).then(docs => {
+
+          this._groups = docs.rows.map(row => {
+            return this.deserialize(row.doc);;
+          });
+
+          this.storage.changes({ live: true, since: 'now', include_docs: true}) .on('change', this.onDatabaseChange);
+
+          resolve(this._groups);
+        }, (error) => {
+          reject(error);
+        });
+      }
     });
-  }
-
-  public save(group: Group) {
-    if (group._id) {
-      return this.edit(group);
-    } else {
-      return this.create(group);
-    }
-  }
-
-  public create(group: Group) {
-    return new Promise((resolve, reject) => {
-      resolve(this.storage.post(group))
-    });
-  }
-
-  public edit(group: Group) {
-    return new Promise((resolve, reject) => {
-      resolve(this.storage.put(group))
-    });
-  }
-
-  public delete(group: Group) {
-    return this.storage.remove(group);
   }
 }

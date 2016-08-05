@@ -1,7 +1,8 @@
-import {Payment} from './payment';
+import {Payment} from '../embeds/payment';
 import {Person} from './person';
+import {Model} from './model';
 
-export class Purchase {
+export class Purchase extends Model {
   public payments: Array<Payment>;
   private type = "Purchase";
 
@@ -11,6 +12,7 @@ export class Purchase {
     public name: string,
     public group_id: string
   ) {
+    super(_id, _rev);
     this.payments = Array<Payment>();
   }
 

@@ -1,7 +1,7 @@
 import {Purchase} from './purchase';
+import {Model} from './model';
 
-
-export class Person {
+export class Person extends Model {
   public balance: Number;
   private type = "Person";
 
@@ -11,6 +11,7 @@ export class Person {
     public name: string,
     public group_id: string
   ) {
+    super(_id, _rev);
     this.balance = 0;
   }
 

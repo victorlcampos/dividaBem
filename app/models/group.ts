@@ -1,4 +1,6 @@
-export class Group {
+import {Model} from './model'
+
+export class Group extends Model {
   private type = "Group";
 
   constructor(
@@ -6,5 +8,6 @@ export class Group {
     public _rev: string,
     public name: string
   ) {
+    super(_id, _rev);
   }
 }

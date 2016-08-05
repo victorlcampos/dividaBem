@@ -4,7 +4,7 @@ import {NavController, NavParams, Alert} from 'ionic-angular';
 import {Person} from '../../models/person';
 import {Group}  from '../../models/group';
 import {Purchase}  from '../../models/purchase';
-import {PaymentItem}  from '../../models/payment-item';
+import {PaymentItem}  from '../../embeds/payment-item';
 
 import {PurchasesProvider} from '../../providers/purchases';
 
