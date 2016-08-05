@@ -8,7 +8,7 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
-      <ion-label primary floating>Nome</ion-label>
+      <ion-label primary stacked>Nome</ion-label>
       <ion-input [(ngModel)]="purchase.name" name="name"></ion-input>
     </ion-item>
   </ion-list>
@@ -26,20 +26,34 @@
     </ion-card-header>
 
     <ion-list>
+
       <ion-item>
-        <ion-label primary floating>Gorjeta (%)</ion-label>
-        <ion-input [(ngModel)]="purchase.paymentFor(person).tip" name="tip"></ion-input>
+        <ion-label primary stacked>Gorjeta (%)</ion-label>
+        <ion-input type="number" [(ngModel)]="purchase.paymentFor(person).tip" name="tip"></ion-input>
       </ion-item>
 
       <ion-item-divider light>Items</ion-item-divider>
 
-      <ion-item *ngFor="let item of purchase.paymentItemsFor(person)">
-        <h2>{{item.name}}</h2>
-        <p>
-          <ion-badge item-right>R$ {{item.value * item.number}}</ion-badge>
-          <ion-badge item-right secundary>Com gorjeta {{item.value * item.number * (1 + (purchase.paymentFor(person).tip)/100) | currency:'BRL':true:'1.2-2'}}</ion-badge>
-        </p>
-      </ion-item>
+      <ion-item-sliding *ngFor="let item of purchase.paymentItemsFor(person)">
+        <ion-item >
+          <h2>{{item.name}}</h2>
+          <p>
+            <ion-badge item-right>R$ {{item.value * item.number}}</ion-badge>
+            <ion-badge item-right secundary>Com gorjeta {{item.value * item.number * (1 + (purchase.paymentFor(person).tip)/100) | currency:'BRL':true:'1.2-2'}}</ion-badge>
+          </p>
+        </ion-item>
+        <ion-item-options>
+          <button primary (click)="editPaymentItem($event, item)">
+            <ion-icon name="md-create"></ion-icon>
+            Editar
+          </button>
+
+          <button danger (click)="deletePaymentItem($event, person, item)">
+            <ion-icon name="trash"></ion-icon>
+            Remover
+          </button>
+        </ion-item-options>
+      </ion-item-sliding>
 
       <ion-item-divider light>
         Total

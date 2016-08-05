@@ -5,6 +5,7 @@ import {Person} from '../../models/person';
 import {Group} from '../../models/group';
 
 import {PeopleProvider} from '../../providers/people';
+import {Utils} from '../../utils/utils';
 
 /*
   Generated class for the PersonFormPage page.
@@ -23,7 +24,7 @@ export class PersonFormPage {
     this.group = navParams.get('group');
 
     let selectedGroup = navParams.get('person');
-    this.person = (selectedGroup === undefined) ? new Person(null, null, "", this.group._id) : selectedGroup;
+    this.person = Utils.deepCopy((selectedGroup === undefined) ? new Person(null, null, "", this.group._id) : selectedGroup);
   }
 
   savePerson(event) {

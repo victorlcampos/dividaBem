@@ -7,6 +7,7 @@ import {Purchase}  from '../../models/purchase';
 import {PaymentItem}  from '../../embeds/payment-item';
 
 import {PurchasesProvider} from '../../providers/purchases';
+import {Utils} from '../../utils/utils';
 
 
 /*
@@ -20,7 +21,9 @@ import {PurchasesProvider} from '../../providers/purchases';
 })
 export class PurchaseFormPage {
   group: Group;
+
   purchase: Purchase;
+
   people: Array<Person>;
 
   constructor(private navCtrl: NavController, navParams: NavParams, private purchasesProvider: PurchasesProvider) {
@@ -28,7 +31,8 @@ export class PurchaseFormPage {
     this.people = navParams.get('people');
 
     let selectedPurchase = navParams.get('purchase');
-    this.purchase = (selectedPurchase === undefined) ? new Purchase(null, null, "", this.group._id) : selectedPurchase;
+
+    this.purchase = Utils.deepCopy((selectedPurchase === undefined) ? new Purchase(null, null, "", this.group._id) : selectedPurchase);
   }
 
   addPaymentItem(event, person: Person) {
@@ -45,7 +49,8 @@ export class PurchaseFormPage {
         {
           name: 'number',
           type: 'number',
-          placeholder: 'Quantidade'
+          placeholder: 'Quantidade',
+          value: '1'
         },
         {
           name: 'value',
@@ -70,6 +75,55 @@ export class PurchaseFormPage {
     });
 
     this.navCtrl.present(prompt);
+  }
+
+  editPaymentItem(event, item: PaymentItem) {
+    let prompt = Alert.create({
+      title: 'Item',
+      message: "Adicione os dados do item que você deseja inserir",
+      inputs: [
+        {
+          name: 'name',
+          placeholder: 'Nome',
+          value: item.name
+        },
+        {
+          name: 'number',
+          type: 'number',
+          placeholder: 'Quantidade',
+          value: item.number.toString()
+        },
+        {
+          name: 'value',
+          type: 'number',
+          placeholder: 'Valor',
+          value: item.value.toString()
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          handler: data => {
+            console.log(data);
+          }
+        },
+        {
+          text: 'Salvar',
+          handler: data => {
+            item.name = data.name;
+            item.value = parseFloat(data.value);
+            item.number = parseInt(data.number);
+          }
+        }
+      ]
+    });
+
+    this.navCtrl.present(prompt);
+  }
+
+  deletePaymentItem(event, person: Person, item: PaymentItem) {
+    let payment = this.purchase.paymentFor(person);
+    payment.paymentItems.splice(payment.paymentItems.indexOf(item), 1);
   }
 
   savePurchase(event) {

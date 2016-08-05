@@ -100,6 +100,39 @@ export class GroupPage {
     });
   }
 
+  deletePurchase(event, purchase: Purchase) {
+    let confirm = Alert.create({
+      title: 'Você deseja deletar essa compra?',
+      message: 'Ao concordar todo o histórico será deletado',
+      buttons: [
+        {
+          text: 'Não',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Sim',
+          handler: () => {
+            this.purchasesProvider.delete(purchase).then(() => {
+              this.purchases.splice(this.purchases.indexOf(purchase), 1);
+
+              this.peopleProvider.list(this.group).then((data: Array<Person>)  => {
+                this.people = data;
+              }, (error) => {
+                console.log(error);
+              });
+            }, (error) => {
+              console.log(error);
+            });
+          }
+        }
+      ]
+    });
+
+    this.navCtrl.present(confirm);
+  }
+
   totalSpend() {
     return this.people.reduce((acc, person) => {
       return acc + person.totalSpend(this.purchases);
