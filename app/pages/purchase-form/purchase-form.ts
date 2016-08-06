@@ -35,8 +35,6 @@ export class PurchaseFormPage {
   }
 
   addPaymentItem(event, person: Person) {
-    let payment = this.purchase.paymentFor(person);
-
     let prompt = Alert.create({
       title: 'Item',
       message: "Adicione os dados do item que você deseja inserir",
@@ -67,6 +65,8 @@ export class PurchaseFormPage {
         {
           text: 'Salvar',
           handler: data => {
+            let payment = this.purchase.paymentFor(person);
+
             if (data.value === '' || data.value === undefined) {
               data.value = 0;
             }

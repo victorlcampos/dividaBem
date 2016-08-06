@@ -21,7 +21,7 @@
           <ion-badge item-right secondary>Saldo {{person.balance | currency:'BRL':true:'1.2-2'}}</ion-badge>
         </h2>
 
-        <button class='add' small (click)="addPaymentItem($event, person)">
+        <button type="button" class='add' small (click)="addPaymentItem($event, person)">
           <ion-icon name="add"></ion-icon>
         </button>
       </ion-card-header>
@@ -44,12 +44,12 @@
             </p>
           </ion-item>
           <ion-item-options>
-            <button primary (click)="editPaymentItem($event, item)">
+            <button type="button" primary (click)="editPaymentItem($event, item)">
               <ion-icon name="md-create"></ion-icon>
               Editar
             </button>
 
-            <button danger (click)="deletePaymentItem($event, person, item)">
+            <button type="button" danger (click)="deletePaymentItem($event, person, item)">
               <ion-icon name="trash"></ion-icon>
               Remover
             </button>
@@ -69,7 +69,7 @@
       </ion-item>
     </ion-card>
 
-    <button class='save'>
+    <button class='save' type=submit>
       Salvar
       <ion-icon name="create"></ion-icon>
     </button>
