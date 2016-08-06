@@ -1,20 +1,22 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>{{ person.id ? "Editar" : "Adicionar"}} um Membro</ion-title>
+    <ion-title>{{ person._id ? "Editar" : "Adicionar"}} um Membro</ion-title>
   </ion-navbar>
 </ion-header>
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <ion-label primary stacked>Nome</ion-label>
-      <ion-input [(ngModel)]="person.name" name="name"></ion-input>
-    </ion-item>
-  </ion-list>
+  <form class="list" [ngFormModel]="form.controlGroup" (ngSubmit)="savePerson()">
+    <ion-list>
+      <ion-item>
+        <ion-label primary stacked>Nome</ion-label>
+        <ion-input [ngFormControl]="form.controlGroup.controls['name']" name="name" required></ion-input>
+      </ion-item>
+    </ion-list>
 
-  <button class='save' (click)="savePerson($event)">
-    Salvar
-    <ion-icon name="create"></ion-icon>
-  </button>
+    <button class='save'>
+      Salvar
+      <ion-icon name="create"></ion-icon>
+    </button>
+  </form>
 </ion-content>

@@ -6,7 +6,9 @@ import {Group} from '../../models/group';
 
 import {PeopleProvider} from '../../providers/people';
 import {Utils} from '../../utils/utils';
+import {PersonForm} from '../../formObjects/person-form';
 
+import {FormBuilder} from '@angular/common';
 /*
   Generated class for the PersonFormPage page.
 
@@ -18,20 +20,27 @@ import {Utils} from '../../utils/utils';
 })
 export class PersonFormPage {
   person: Person;
-  group: Group;
+  form: PersonForm;
 
-  constructor(private navCtrl: NavController, navParams: NavParams, private personProvider: PeopleProvider) {
-    this.group = navParams.get('group');
+  constructor(private navCtrl: NavController,
+              navParams: NavParams,
+              private peopleProvider: PeopleProvider,
+              builder: FormBuilder) {
 
+    let group = navParams.get('group');
     let selectedGroup = navParams.get('person');
-    this.person = Utils.deepCopy((selectedGroup === undefined) ? new Person(null, null, "", this.group._id) : selectedGroup);
+    this.person = Utils.deepCopy((selectedGroup === undefined) ? new Person(null, null, "", group._id) : selectedGroup);
+
+    this.form = new PersonForm(this.person, builder);
   }
 
   savePerson(event) {
-    this.personProvider.save(this.person).then((data) => {
-      this.navCtrl.pop();
-    }, (error) => {
-      console.log(error);
-    });
+    if (this.form.isValid()) {
+      this.peopleProvider.save(this.form.getObject()).then((data) => {
+        this.navCtrl.pop();
+      }, (error) => {
+        console.log(error);
+      });
+    }
   }
 }

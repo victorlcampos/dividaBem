@@ -6,15 +6,17 @@
 
 
 <ion-content padding>
-  <ion-list>
-    <ion-item>
-      <ion-label primary stacked>Nome</ion-label>
-      <ion-input [(ngModel)]="group.name" name="name"></ion-input>
-    </ion-item>
-  </ion-list>
+  <form class="list" [ngFormModel]="form.controlGroup" (ngSubmit)="saveGroup()">
+    <ion-list>
+      <ion-item>
+        <ion-label primary stacked>Nome *</ion-label>
+        <ion-input [ngFormControl]="form.controlGroup.controls['name']" name="name" required></ion-input>
+      </ion-item>
+    </ion-list>
 
-  <button class='save' (click)="saveGroup($event)">
-    Salvar
-    <ion-icon name="create"></ion-icon>
-  </button>
+    <button class='save'>
+      Salvar
+      <ion-icon [disabled]="!form.isValid()" name="create"></ion-icon>
+    </button>
+  </form>
 </ion-content>

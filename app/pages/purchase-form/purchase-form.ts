@@ -21,7 +21,6 @@ import {Utils} from '../../utils/utils';
 })
 export class PurchaseFormPage {
   group: Group;
-
   purchase: Purchase;
 
   people: Array<Person>;
@@ -68,6 +67,14 @@ export class PurchaseFormPage {
         {
           text: 'Salvar',
           handler: data => {
+            if (data.value === '' || data.value === undefined) {
+              data.value = 0;
+            }
+
+            if (data.number === '' || data.number === undefined) {
+              data.number = 1;
+            }
+
             payment.paymentItems.push(new PaymentItem(data.name, parseFloat(data.value), parseInt(data.number)));
           }
         }
@@ -126,7 +133,7 @@ export class PurchaseFormPage {
     payment.paymentItems.splice(payment.paymentItems.indexOf(item), 1);
   }
 
-  savePurchase(event) {
+  savePurchase() {
     this.purchasesProvider.save(this.purchase).then((data) => {
       this.navCtrl.pop();
     }, (error) => {
