@@ -5,7 +5,7 @@ import {FormObject} from './form-object';
 export class GroupForm extends FormObject<Group> {
   public controlGroup: ControlGroup;
 
-  constructor(private group: Group, builder: FormBuilder)  {
+  constructor(group: Group, builder: FormBuilder)  {
     super(group, builder);
   }
 
@@ -16,6 +16,6 @@ export class GroupForm extends FormObject<Group> {
   }
 
   protected fillObject(resource: Group) {
-    this.group.name = this.controlGroup.controls['name'].value
+    resource.name = this.controlGroup.controls['name'].value
   };
 }

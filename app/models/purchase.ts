@@ -25,13 +25,13 @@ export class Purchase extends Model {
     return this;
   }
 
-  public paymentFor(person: Person) {
+  public paymentFor(person_id: string) {
     let payment = this.payments.find((payment) => {
-      return payment.person_id == person._id;
+      return payment.person_id == person_id;
     });
 
     if (!payment) {
-      payment = new Payment(0, person._id);
+      payment = new Payment(0, person_id);
       this.payments.push(payment);
     }
 
@@ -39,7 +39,7 @@ export class Purchase extends Model {
   }
 
   public paymentItemsFor(person: Person) {
-    return this.paymentFor(person).paymentItems;
+    return this.paymentFor(person._id).paymentItems;
   }
 
   public total() {
@@ -57,10 +57,10 @@ export class Purchase extends Model {
   }
 
   public totalFor(person: Person) {
-    return this.paymentFor(person).total();
+    return this.paymentFor(person._id).total();
   }
 
   public totalWithTipFor(person: Person) {
-    return this.paymentFor(person).totalWithTip();
+    return this.paymentFor(person._id).totalWithTip();
   }
 }

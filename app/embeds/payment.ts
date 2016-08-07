@@ -16,6 +16,7 @@ export class Payment {
 
     this.paymentItems = json.paymentItems.map((data) => {
       let paymentItem = new PaymentItem(data.name, parseFloat(data.value), parseInt(data.number));
+      paymentItem.person_id = this.person_id;
       return paymentItem;
     });
 

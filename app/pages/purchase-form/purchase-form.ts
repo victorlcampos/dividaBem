@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
-import {NavController, NavParams, Alert} from 'ionic-angular';
+import {NavController, NavParams, Alert, Modal} from 'ionic-angular';
 
 import {Person} from '../../models/person';
-import {Group}  from '../../models/group';
 import {Purchase}  from '../../models/purchase';
+import {Group}  from '../../models/group';
 import {PaymentItem}  from '../../embeds/payment-item';
 
 import {PurchasesProvider} from '../../providers/purchases';
 import {Utils} from '../../utils/utils';
 
+import {PaymentItemFormPage} from '../payment-item-form/payment-item-form';
 
 /*
   Generated class for the PurchaseFormPage page.
@@ -34,102 +35,24 @@ export class PurchaseFormPage {
     this.purchase = Utils.deepCopy((selectedPurchase === undefined) ? new Purchase(null, null, "", this.group._id) : selectedPurchase);
   }
 
-  addPaymentItem(event, person: Person) {
-    let prompt = Alert.create({
-      title: 'Item',
-      message: "Adicione os dados do item que você deseja inserir",
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Nome'
-        },
-        {
-          name: 'number',
-          type: 'number',
-          placeholder: 'Quantidade',
-          value: '1'
-        },
-        {
-          name: 'value',
-          type: 'number',
-          placeholder: 'Valor'
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          handler: data => {
-            console.log(data);
-          }
-        },
-        {
-          text: 'Salvar',
-          handler: data => {
-            let payment = this.purchase.paymentFor(person);
-
-            if (data.value === '' || data.value === undefined) {
-              data.value = 0;
-            }
-
-            if (data.number === '' || data.number === undefined) {
-              data.number = 1;
-            }
-
-            payment.paymentItems.push(new PaymentItem(data.name, parseFloat(data.value), parseInt(data.number)));
-          }
-        }
-      ]
-    });
-
-    this.navCtrl.present(prompt);
+  addPaymentItem(event) {
+    this.navCtrl.present(Modal.create(PaymentItemFormPage, {
+      purchase: this.purchase,
+      people: this.people
+    }));
   }
 
-  editPaymentItem(event, item: PaymentItem) {
-    let prompt = Alert.create({
-      title: 'Item',
-      message: "Adicione os dados do item que você deseja inserir",
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Nome',
-          value: item.name
-        },
-        {
-          name: 'number',
-          type: 'number',
-          placeholder: 'Quantidade',
-          value: item.number.toString()
-        },
-        {
-          name: 'value',
-          type: 'number',
-          placeholder: 'Valor',
-          value: item.value.toString()
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          handler: data => {
-            console.log(data);
-          }
-        },
-        {
-          text: 'Salvar',
-          handler: data => {
-            item.name = data.name;
-            item.value = parseFloat(data.value);
-            item.number = parseInt(data.number);
-          }
-        }
-      ]
-    });
-
-    this.navCtrl.present(prompt);
+  editPaymentItem(event, person: Person, item: PaymentItem) {
+    this.navCtrl.present(Modal.create(PaymentItemFormPage, {
+      purchase: this.purchase,
+      people: this.people,
+      person: person,
+      'payment-item': item
+    }));
   }
 
   deletePaymentItem(event, person: Person, item: PaymentItem) {
-    let payment = this.purchase.paymentFor(person);
+    let payment = this.purchase.paymentFor(person._id);
     payment.paymentItems.splice(payment.paymentItems.indexOf(item), 1);
   }
 
@@ -138,6 +61,23 @@ export class PurchaseFormPage {
       this.navCtrl.pop();
     }, (error) => {
       console.log(error);
+    });
+  }
+
+  payRight(event) {
+    this.purchase.payments.forEach((payment) => {
+      payment.value = payment.totalWithTip();
+    });
+  }
+
+  payEquals(event) {
+    let total = this.purchase.total();
+    let numOfPeople = this.people.length;
+
+    let paymentValue = Math.round((total/numOfPeople)*100)/100;
+
+    this.purchase.payments.forEach((payment) => {
+      payment.value = paymentValue;
     });
   }
 }

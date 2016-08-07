@@ -24,7 +24,7 @@ export class Person extends Model {
 
   public totalPaid(purchases: Array<Purchase>) {
     let total = purchases.reduce((acc, purchase) => {
-      return acc + purchase.paymentFor(this).value;
+      return acc + purchase.paymentFor(this._id).value;
     }, 0);
     return total;
   }
